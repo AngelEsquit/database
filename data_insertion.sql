@@ -253,26 +253,26 @@ INSERT INTO consultas_preguntas (consulta_id, pregunta_id, valores_enteros, valo
 (16, 3, ARRAY[24.0, 24.0], NULL, 'PIO elevada'),
 (16, 4, NULL, true, 'Uveítis');
 
-INSERT INTO citas (paciente_id, nombre, fecha, duracion) VALUES
-(1, 'Control presión intraocular', '2023-01-16 09:00:00', '00:20:00'),
-(1, 'Moscas volantes OD', '2023-06-22 14:30:00', '00:20:00'),
-(1, 'Revisión campo visual', '2024-02-09 10:15:00', '00:20:00'),
-(2, 'Dolor con lentes', '2023-03-08 15:45:00', '00:20:00'),
-(2, 'Seguimiento ojo seco', '2023-09-14 11:00:00', '00:20:00'),
-(2, 'Cambio graduación', '2024-01-05 08:30:00', '00:20:00'),
-(3, 'Fondo de ojo diabético', '2023-02-20 16:00:00', '00:20:00'),
-(3, 'Visión borrosa', '2023-11-30 09:30:00', '00:20:00'),
-(4, 'Topografía corneal', '2023-04-12 14:00:00', '00:20:00'),
-(4, 'Picor ocular', '2023-08-17 10:45:00', '00:20:00'),
-(5, 'Irritación solar', '2023-05-25 17:00:00', '00:20:00'),
-(5, 'Pterigión OD', '2024-03-18 08:15:00', '00:20:00'),
-(6, 'Fatiga visual', '2023-07-07 15:00:00', '00:20:00'),
-(6, 'Control hipermetropía', '2024-01-22 11:30:00', '00:20:00'),
-(7, 'Visión nocturna', '2023-10-11 16:45:00', '00:20:00'),
-(8, 'Ojo rojo recurrente', '2023-12-05 09:00:00', '00:20:00');
+INSERT INTO citas (paciente_id, nombre, fecha, duracion)
+VALUES
+(1, (SELECT nombre FROM pacientes WHERE id = 1), '2025-05-16 09:00:00-06', 1200), -- 1200 seconds
+(1, (SELECT nombre FROM pacientes WHERE id = 1), '2025-05-22 14:30:00-06', 1200),
+(1, (SELECT nombre FROM pacientes WHERE id = 1), '2025-05-09 10:15:00-06', 1200),
+(2, (SELECT nombre FROM pacientes WHERE id = 2), '2025-05-08 15:45:00-06', 1200),
+(2, (SELECT nombre FROM pacientes WHERE id = 2), '2025-05-14 11:00:00-06', 1200),
+(2, (SELECT nombre FROM pacientes WHERE id = 2), '2025-05-05 08:30:00-06', 1200),
+(3, (SELECT nombre FROM pacientes WHERE id = 3), '2025-05-20 16:00:00-06', 1200),
+(3, (SELECT nombre FROM pacientes WHERE id = 3), '2025-05-30 09:30:00-06', 1200),
+(4, (SELECT nombre FROM pacientes WHERE id = 4), '2025-05-12 14:00:00-06', 1200),
+(4, (SELECT nombre FROM pacientes WHERE id = 4), '2025-05-17 10:45:00-06', 1200),
+(5, (SELECT nombre FROM pacientes WHERE id = 5), '2025-05-25 17:00:00-06', 1200),
+(5, (SELECT nombre FROM pacientes WHERE id = 5), '2025-05-18 08:15:00-06', 1200),
+(6, (SELECT nombre FROM pacientes WHERE id = 6), '2025-05-07 15:00:00-06', 1200),
+(6, (SELECT nombre FROM pacientes WHERE id = 6), '2025-05-22 11:30:00-06', 1200),
+(7, (SELECT nombre FROM pacientes WHERE id = 7), '2025-05-11 16:45:00-06', 1200),
+(8, (SELECT nombre FROM pacientes WHERE id = 8), '2025-05-05 09:00:00-06', 1200);
 
 INSERT INTO horarios_laborales (dia_semana, hora_apertura, hora_cierre) VALUES
--- Lunes a Viernes (mañana)
 (1, '09:00:00', '13:00:00'),  -- Lunes
 (2, '09:00:00', '13:00:00'),  -- Martes
 (3, '09:00:00', '13:00:00'),  -- Miércoles

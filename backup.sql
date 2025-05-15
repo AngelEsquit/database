@@ -73,9 +73,9 @@ ALTER SEQUENCE public.antecedentes_id_seq OWNED BY public.antecedentes.id;
 
 CREATE TABLE public.citas (
     id integer NOT NULL,
-    paciente_id integer NOT NULL,
-    fecha timestamp without time zone NOT NULL,
-    duracion time without time zone DEFAULT '00:20:00'::time without time zone NOT NULL,
+    paciente_id integer,
+    fecha timestamp with time zone NOT NULL,
+    duracion BIGINT NOT NULL DEFAULT 1200,
     nombre character varying
 );
 
