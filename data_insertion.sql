@@ -296,14 +296,19 @@ INSERT INTO horarios_especiales (fecha, hora_apertura, hora_cierre) VALUES
 ('2024-07-15', '10:00:00', '14:00:00'),
 ('2024-11-08', '08:00:00', '12:00:00');
 
-INSERT INTO examenes (paciente_id, consulta_id, tipo, fecha, ruta_archivo) VALUES
-(1, 1, 'Tonometría de aire', '2023-01-15', '/examenes/tonometria_1_20230115.pdf'),
-(1, 3, 'Campo visual 30-2', '2024-02-10', '/examenes/campovisual_1_20240210.pdf'),
-(2, 4, 'Topografía corneal', '2023-03-08', '/examenes/topografia_2_20230308.jpg'),
-(2, 5, 'Test de Schirmer', '2023-09-14', '/examenes/schirmer_2_20230914.pdf'),
-(3, 7, 'Retinografía', '2023-02-20', '/examenes/retino_3_20230220.png'),
-(3, 8, 'OCT macular', '2023-11-30', '/examenes/oct_3_20231130.dcm'),
-(4, 9, 'Topografía corneal Pentacam', '2023-04-12', '/examenes/pentacam_4_20230412.pdf'),
-(5, 12, 'Biomicroscopía anterior', '2024-03-18', '/examenes/biomicro_5_20240318.jpg'),
-(6, 14, 'Retinoscopía', '2024-01-22', '/examenes/retinoscopia_6_20240122.pdf'),
-(7, 15, 'Adaptometría', '2023-10-11', '/examenes/adaptometria_7_20231011.pdf');
+INSERT INTO examenes (paciente_id, consulta_id, tipo, fecha, s3_key, file_size, mime_type) VALUES
+(1, 1, 'Tonometría de aire', '2023-01-15', 'examenes/1/20230115_tonometria_aire.pdf', 892640, 'application/pdf'),
+(1, 3, 'Campo visual 30-2', '2024-02-10', 'examenes/1/20240210_campo_visual_30_2.pdf', 2458720, 'application/pdf'),
+(2, 4, 'Topografía corneal', '2023-03-08', 'examenes/2/20230308_topografia_corneal.pdf', 1572864, 'application/pdf'),
+(2, 5, 'Test de Schirmer', '2023-09-14', 'examenes/2/20230914_test_schirmer.pdf', 651240, 'application/pdf'),
+(3, 7, 'Retinografía', '2023-02-20', 'examenes/3/20230220_retinografia.pdf', 1245184, 'application/pdf'),
+(3, 8, 'OCT macular', '2023-11-30', 'examenes/3/20231130_oct_macular.pdf', 3145728, 'application/pdf'),
+(4, 9, 'Topografía corneal Pentacam', '2023-04-12', 'examenes/4/20230412_pentacam.pdf', 1945728, 'application/pdf'),
+(5, 12, 'Biomicroscopía anterior', '2024-03-18', 'examenes/5/20240318_biomicroscopia_anterior.pdf', 2097152, 'application/pdf'),
+(6, 14, 'Retinoscopía', '2024-01-22', 'examenes/6/20240122_retinoscopia.pdf', 1048576, 'application/pdf'),
+(7, 15, 'Adaptometría', '2023-10-11', 'examenes/7/20231011_adaptometria.pdf', 756240, 'application/pdf');
+
+INSERT INTO examenes (paciente_id, consulta_id, tipo, fecha, s3_key, file_size, mime_type) VALUES
+(1, NULL, 'Paquimetría', '2025-10-20', NULL, NULL, NULL), -- Patient 1, scheduled for Oct 2024
+(2, NULL, 'Refracción ciclopléjica', '2025-01-05', NULL, NULL, NULL), -- Patient 2, scheduled for Jan 2025
+(3, NULL, 'Curva de tensión ocular', '2025-07-01', NULL, NULL, NULL); -- Patient 3, scheduled for July 2024

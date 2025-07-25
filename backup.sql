@@ -1787,6 +1787,15 @@ ALTER TABLE ONLY public.usuarios_roles
     ADD CONSTRAINT usuarios_roles_usuario_id_fkey FOREIGN KEY (usuario_id) REFERENCES public.usuarios(id);
 
 
+ALTER TABLE public.examenes
+DROP COLUMN IF EXISTS ruta_archivo,
+ADD COLUMN s3_key VARCHAR(255),
+ADD COLUMN file_size BIGINT,
+ADD COLUMN mime_type VARCHAR(50);
+
+ALTER TABLE public.examenes
+ADD CONSTRAINT check_mime_type CHECK (mime_type = 'application/pdf');
+
 -- Completed on 2025-04-06 22:56:38
 
 --
