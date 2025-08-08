@@ -117,24 +117,31 @@ INSERT INTO diagnosticos (nombre, consulta_id, recomendacion) VALUES
 ('Uveítis anterior recurrente', 16, 'Corticoides tópicos, dilatación pupilar');
 
 -- Tratamientos de cada diagnostico
-INSERT INTO tratamientos (diagnostico_id, componente_activo, presentacion, dosificacion, frecuencia, tiempo) VALUES
-(1, 'Timolol maleato', 'Solución oftálmica', 0.5, '12:00:00', '720:00:00'),
-(2, 'Ketorolaco trometamina', 'Gotas oftálmicas', 0.4, '08:00:00', '168:00:00'),
-(3, 'Brimonidina tartrato', 'Solución oftálmica', 0.15, '12:00:00', '2160:00:00'),
-(4, 'Moxifloxacino clorhidrato', 'Gotas oftálmicas', 0.5, '04:00:00', '168:00:00'),
-(5, 'Ciclosporina', 'Emulsión oftálmica', 0.05, '12:00:00', '720:00:00'),
-(6, 'Atropina sulfato', 'Solución oftálmica', 0.01, '24:00:00', '2160:00:00'),
-(7, 'Ranibizumab', 'Inyección intravítrea', 0.5, '720:00:00', '2160:00:00'),
-(8, 'Aflibercept', 'Inyección intravítrea', 2.0, '720:00:00', '2160:00:00'),
-(9, 'Fluorometolona', 'Suspensión oftálmica', 0.1, '12:00:00', '24:00:00'),
-(10, 'Olopatadina clorhidrato', 'Gotas oftálmicas', 0.2, '12:00:00', '336:00:00'),
-(11, 'Dexametasona fosfato', 'Ungüento ocular', 0.1, '08:00:00', '168:00:00'),
-(12, 'Mitomicina C', 'Solución para aplicación intraoperatoria', 0.02, '00:00:00', '01:00:00'),
-(13, 'Carboximetilcelulosa', 'Gotas oftálmicas', 1.0, '04:00:00', '168:00:00'),
-(14, 'Tropicamida', 'Solución oftálmica', 1.0, '24:00:00', '24:00:00'),
-(15, 'Palmitato de vitamina A', 'Cápsulas blandas', 25000, '24:00:00', '168:00:00'),
-(16, 'Prednisolona acetato', 'Suspensión oftálmica', 1.0, '02:00:00', '336:00:00'),
-(16, 'Ciclopentolato clorhidrato', 'Gotas oftálmicas', 1.0, '12:00:00', '168:00:00');
+INSERT INTO tratamientos (
+    diagnostico_id,
+    componente_activo,
+    presentacion,
+    dosificacion,
+    frecuencia,
+    tiempo
+) VALUES
+(1, 'Timolol maleato', 'Solución oftálmica', '0.5', '12:00:00', '720:00:00'),
+(2, 'Ketorolaco trometamina', 'Gotas oftálmicas', '0.4', '08:00:00', '168:00:00'),
+(3, 'Brimonidina tartrato', 'Solución oftálmica', '0.15', '12:00:00', '2160:00:00'),
+(4, 'Moxifloxacino clorhidrato', 'Gotas oftálmicas', '0.5', '04:00:00', '168:00:00'),
+(5, 'Ciclosporina', 'Emulsión oftálmica', '0.05', '12:00:00', '720:00:00'),
+(6, 'Atropina sulfato', 'Solución oftálmica', '0.01', '24:00:00', '2160:00:00'),
+(7, 'Ranibizumab', 'Inyección intravítrea', '0.5', '720:00:00', '2160:00:00'),
+(8, 'Aflibercept', 'Inyección intravítrea', '2.0', '720:00:00', '2160:00:00'),
+(9, 'Fluorometolona', 'Suspensión oftálmica', '0.1', '12:00:00', '24:00:00'),
+(10, 'Olopatadina clorhidrato', 'Gotas oftálmicas', '0.2', '12:00:00', '336:00:00'),
+(11, 'Dexametasona fosfato', 'Ungüento ocular', '0.1', '08:00:00', '168:00:00'),
+(12, 'Mitomicina C', 'Solución para aplicación intraoperatoria', '0.02', '00:00:00', '01:00:00'),
+(13, 'Carboximetilcelulosa', 'Gotas oftálmicas', '1.0', '04:00:00', '168:00:00'),
+(14, 'Tropicamida', 'Solución oftálmica', '1.0', '24:00:00', '24:00:00'),
+(15, 'Palmitato de vitamina A', 'Cápsulas blandas', '25000', '24:00:00', '168:00:00'),
+(16, 'Prednisolona acetato', 'Suspensión oftálmica', '1.0', '02:00:00', '336:00:00'),
+(16, 'Ciclopentolato clorhidrato', 'Gotas oftálmicas', '1.0', '12:00:00', '168:00:00');
 
 -- Usuarios del programa
 INSERT INTO usuarios (username, password_hash, correo) VALUES

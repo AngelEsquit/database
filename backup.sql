@@ -1796,9 +1796,13 @@ ADD COLUMN mime_type VARCHAR(50);
 ALTER TABLE public.examenes
 ADD CONSTRAINT check_mime_type CHECK (mime_type = 'application/pdf');
 
+ALTER TABLE public.tratamientos
+ALTER COLUMN dosificacion TYPE TEXT;
+
 -- Completed on 2025-04-06 22:56:38
 
 --
 -- PostgreSQL database dump complete
 --
+
 
