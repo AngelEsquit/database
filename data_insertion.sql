@@ -262,7 +262,7 @@ INSERT INTO consultas_preguntas (consulta_id, pregunta_id, valores_enteros, valo
 
 INSERT INTO citas (paciente_id, nombre, fecha, duracion)
 VALUES
-(1, (SELECT nombre FROM pacientes WHERE id = 1), '2025-05-16 09:00:00-06', 1200), -- 1200 seconds
+(1, (SELECT nombre FROM pacientes WHERE id = 1), '2025-05-16 09:00:00-06', 1200),
 (1, (SELECT nombre FROM pacientes WHERE id = 1), '2025-05-22 14:30:00-06', 1200),
 (1, (SELECT nombre FROM pacientes WHERE id = 1), '2025-05-09 10:15:00-06', 1200),
 (2, (SELECT nombre FROM pacientes WHERE id = 2), '2025-05-08 15:45:00-06', 1200),
@@ -278,6 +278,35 @@ VALUES
 (6, (SELECT nombre FROM pacientes WHERE id = 6), '2025-05-22 11:30:00-06', 1200),
 (7, (SELECT nombre FROM pacientes WHERE id = 7), '2025-05-11 16:45:00-06', 1200),
 (8, (SELECT nombre FROM pacientes WHERE id = 8), '2025-05-05 09:00:00-06', 1200);
+
+-- DEMO EVENTOS
+-- Creamos 3 citas específicas para demostrar CREATED / RESCHEDULED / CANCELLED. Usamos IDs altos para no chocar con secuencia actual.
+DO $$
+DECLARE v_exists int; BEGIN
+    -- CREATED base (si no existen)
+    SELECT 1 INTO v_exists FROM public.citas WHERE id = 9001; IF NOT FOUND THEN
+        INSERT INTO public.citas(id, paciente_id, fecha, duracion, nombre, estado, updated_by)
+        VALUES (9001, 1, now() + interval '1 day', 1800, 'Control Glaucoma', 'SCHEDULED', 1);
+    END IF;
+    SELECT 1 INTO v_exists FROM public.citas WHERE id = 9002; IF NOT FOUND THEN
+        INSERT INTO public.citas(id, paciente_id, fecha, duracion, nombre, estado, updated_by)
+        VALUES (9002, 2, now() + interval '2 days', 1200, 'Revisión Lentes', 'SCHEDULED', 1);
+    END IF;
+    SELECT 1 INTO v_exists FROM public.citas WHERE id = 9003; IF NOT FOUND THEN
+        INSERT INTO public.citas(id, paciente_id, fecha, duracion, nombre, estado, updated_by)
+        VALUES (9003, 3, now() + interval '3 days', 900, 'Consulta General', 'SCHEDULED', 1);
+    END IF;
+END $$;
+
+-- Reprogramamos 9001 (RESCHEDULED)
+UPDATE public.citas
+SET fecha = fecha + interval '2 hours', duracion = 2400, updated_by = 2, updated_at = now()
+WHERE id = 9001;
+
+-- Cancelamos 9002 (CANCELLED)
+UPDATE public.citas
+SET estado = 'CANCELLED', updated_by = 3, updated_at = now()
+WHERE id = 9002;
 
 INSERT INTO horarios_laborales (dia_semana, hora_apertura, hora_cierre) VALUES
 (1, '09:00:00', '13:00:00'),  -- Lunes
