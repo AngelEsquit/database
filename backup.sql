@@ -773,7 +773,7 @@ CREATE TABLE public.usuarios (
     id integer NOT NULL,
     username character varying NOT NULL,
     password_hash character varying NOT NULL,
-    correo character varying NOT NULL
+    correo character varying NOT NULL UNIQUE
 );
 
 
