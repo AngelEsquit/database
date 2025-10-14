@@ -116,32 +116,7 @@ INSERT INTO diagnosticos (nombre, consulta_id, recomendacion) VALUES
 ('Nictalopia por deficiencia vitamina A', 15, 'Suplementos vitamínicos, revisar dieta'),
 ('Uveítis anterior recurrente', 16, 'Corticoides tópicos, dilatación pupilar');
 
--- Tratamientos de cada diagnostico
-INSERT INTO tratamientos (
-    diagnostico_id,
-    componente_activo,
-    presentacion,
-    dosificacion,
-    frecuencia,
-    tiempo
-) VALUES
-(1, 'Timolol maleato', 'Solución oftálmica', '0.5', '12:00:00', '720:00:00'),
-(2, 'Ketorolaco trometamina', 'Gotas oftálmicas', '0.4', '08:00:00', '168:00:00'),
-(3, 'Brimonidina tartrato', 'Solución oftálmica', '0.15', '12:00:00', '2160:00:00'),
-(4, 'Moxifloxacino clorhidrato', 'Gotas oftálmicas', '0.5', '04:00:00', '168:00:00'),
-(5, 'Ciclosporina', 'Emulsión oftálmica', '0.05', '12:00:00', '720:00:00'),
-(6, 'Atropina sulfato', 'Solución oftálmica', '0.01', '24:00:00', '2160:00:00'),
-(7, 'Ranibizumab', 'Inyección intravítrea', '0.5', '720:00:00', '2160:00:00'),
-(8, 'Aflibercept', 'Inyección intravítrea', '2.0', '720:00:00', '2160:00:00'),
-(9, 'Fluorometolona', 'Suspensión oftálmica', '0.1', '12:00:00', '24:00:00'),
-(10, 'Olopatadina clorhidrato', 'Gotas oftálmicas', '0.2', '12:00:00', '336:00:00'),
-(11, 'Dexametasona fosfato', 'Ungüento ocular', '0.1', '08:00:00', '168:00:00'),
-(12, 'Mitomicina C', 'Solución para aplicación intraoperatoria', '0.02', '00:00:00', '01:00:00'),
-(13, 'Carboximetilcelulosa', 'Gotas oftálmicas', '1.0', '04:00:00', '168:00:00'),
-(14, 'Tropicamida', 'Solución oftálmica', '1.0', '24:00:00', '24:00:00'),
-(15, 'Palmitato de vitamina A', 'Cápsulas blandas', '25000', '24:00:00', '168:00:00'),
-(16, 'Prednisolona acetato', 'Suspensión oftálmica', '1.0', '02:00:00', '336:00:00'),
-(16, 'Ciclopentolato clorhidrato', 'Gotas oftálmicas', '1.0', '12:00:00', '168:00:00');
+
 
 -- Usuarios del programa
 INSERT INTO usuarios (username, password_hash, correo) VALUES
@@ -177,7 +152,7 @@ INSERT INTO roles_permisos (rol_id, permiso_id) VALUES
 (3, 3);
 
 -- Preguntas de los cuestionarios
-INSERT INTO preguntas (nombre, tipo, bilaterial) VALUES
+INSERT INTO preguntas (nombre, tipo, bilateral) VALUES
 ('AV sin lentes', 'entero', true),
 ('AV con lentes', 'entero', true),
 ('Presion Ocular', 'float', true),
@@ -262,7 +237,7 @@ INSERT INTO consultas_preguntas (consulta_id, pregunta_id, valores_enteros, valo
 
 INSERT INTO citas (paciente_id, nombre, fecha, duracion)
 VALUES
-(1, (SELECT nombre FROM pacientes WHERE id = 1), '2025-05-16 09:00:00-06', 1200),
+(1, (SELECT nombre FROM pacientes WHERE id = 1), '2025-05-16 09:00:00-06', 1200), -- 1200 seconds
 (1, (SELECT nombre FROM pacientes WHERE id = 1), '2025-05-22 14:30:00-06', 1200),
 (1, (SELECT nombre FROM pacientes WHERE id = 1), '2025-05-09 10:15:00-06', 1200),
 (2, (SELECT nombre FROM pacientes WHERE id = 2), '2025-05-08 15:45:00-06', 1200),
@@ -278,35 +253,6 @@ VALUES
 (6, (SELECT nombre FROM pacientes WHERE id = 6), '2025-05-22 11:30:00-06', 1200),
 (7, (SELECT nombre FROM pacientes WHERE id = 7), '2025-05-11 16:45:00-06', 1200),
 (8, (SELECT nombre FROM pacientes WHERE id = 8), '2025-05-05 09:00:00-06', 1200);
-
--- DEMO EVENTOS
--- Creamos 3 citas específicas para demostrar CREATED / RESCHEDULED / CANCELLED. Usamos IDs altos para no chocar con secuencia actual.
-DO $$
-DECLARE v_exists int; BEGIN
-    -- CREATED base (si no existen)
-    SELECT 1 INTO v_exists FROM public.citas WHERE id = 9001; IF NOT FOUND THEN
-        INSERT INTO public.citas(id, paciente_id, fecha, duracion, nombre, estado, updated_by)
-        VALUES (9001, 1, now() + interval '1 day', 1800, 'Control Glaucoma', 'SCHEDULED', 1);
-    END IF;
-    SELECT 1 INTO v_exists FROM public.citas WHERE id = 9002; IF NOT FOUND THEN
-        INSERT INTO public.citas(id, paciente_id, fecha, duracion, nombre, estado, updated_by)
-        VALUES (9002, 2, now() + interval '2 days', 1200, 'Revisión Lentes', 'SCHEDULED', 1);
-    END IF;
-    SELECT 1 INTO v_exists FROM public.citas WHERE id = 9003; IF NOT FOUND THEN
-        INSERT INTO public.citas(id, paciente_id, fecha, duracion, nombre, estado, updated_by)
-        VALUES (9003, 3, now() + interval '3 days', 900, 'Consulta General', 'SCHEDULED', 1);
-    END IF;
-END $$;
-
--- Reprogramamos 9001 (RESCHEDULED)
-UPDATE public.citas
-SET fecha = fecha + interval '2 hours', duracion = 2400, updated_by = 2, updated_at = now()
-WHERE id = 9001;
-
--- Cancelamos 9002 (CANCELLED)
-UPDATE public.citas
-SET estado = 'CANCELLED', updated_by = 3, updated_at = now()
-WHERE id = 9002;
 
 INSERT INTO horarios_laborales (dia_semana, hora_apertura, hora_cierre) VALUES
 (1, '09:00:00', '13:00:00'),  -- Lunes

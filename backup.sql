@@ -530,7 +530,7 @@ CREATE TABLE public.preguntas (
     id integer NOT NULL,
     nombre character varying NOT NULL,
     tipo character varying NOT NULL,
-    bilaterial boolean NOT NULL
+    bilateral boolean NOT NULL
 );
 
 
@@ -773,7 +773,7 @@ CREATE TABLE public.usuarios (
     id integer NOT NULL,
     username character varying NOT NULL,
     password_hash character varying NOT NULL,
-    correo character varying NOT NULL UNIQUE
+    correo character varying NOT NULL
 );
 
 
@@ -1129,7 +1129,7 @@ COPY public.permisos (id, name, descripcion) FROM stdin;
 -- Data for Name: preguntas; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.preguntas (id, nombre, tipo, bilaterial) FROM stdin;
+COPY public.preguntas (id, nombre, tipo, bilateral) FROM stdin;
 \.
 
 
@@ -1806,116 +1806,3 @@ ALTER COLUMN dosificacion TYPE TEXT;
 --
 
 
--- =============================================================
---  ADICIÓN POSTERIOR: Soporte de historial (reprogramaciones / cancelaciones)
--- =============================================================
-
--- 1. Columnas adicionales en citas (idempotentes)
-ALTER TABLE public.citas
-    ADD COLUMN IF NOT EXISTS estado VARCHAR(15) NOT NULL DEFAULT 'SCHEDULED',
-    ADD COLUMN IF NOT EXISTS updated_by INT,
-    ADD COLUMN IF NOT EXISTS updated_at timestamptz NOT NULL DEFAULT now();
-
-DO $$
-BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM pg_constraint
-        WHERE conrelid = 'public.citas'::regclass AND conname = 'citas_estado_check'
-    ) THEN
-        ALTER TABLE public.citas
-            ADD CONSTRAINT citas_estado_check CHECK (estado IN ('SCHEDULED','CANCELLED'));
-    END IF;
-END$$;
-
-DO $$
-BEGIN
-    IF to_regclass('public.usuarios') IS NOT NULL AND NOT EXISTS (
-        SELECT 1 FROM pg_constraint
-        WHERE conrelid = 'public.citas'::regclass AND conname = 'citas_updated_by_fkey'
-    ) THEN
-        ALTER TABLE public.citas
-            ADD CONSTRAINT citas_updated_by_fkey FOREIGN KEY (updated_by)
-            REFERENCES public.usuarios(id);
-    END IF;
-END$$;
-
--- 2. Tabla de eventos (idempotente)
-CREATE TABLE IF NOT EXISTS public.citas_eventos (
-    id           bigserial PRIMARY KEY,
-    cita_id      INT NOT NULL REFERENCES public.citas(id) ON DELETE CASCADE,
-    tipo_evento  VARCHAR(15) NOT NULL CHECK (tipo_evento IN ('CREATED','RESCHEDULED','CANCELLED')),
-    old_fecha    timestamptz,
-    new_fecha    timestamptz,
-    old_duracion BIGINT,
-    new_duracion BIGINT,
-    usuario_id   INT REFERENCES public.usuarios(id),
-    creado_en    timestamptz NOT NULL DEFAULT now()
-);
-
--- 3. Índices
-CREATE INDEX IF NOT EXISTS idx_citas_eventos_tipo_creado
-    ON public.citas_eventos (tipo_evento, creado_en DESC);
-CREATE INDEX IF NOT EXISTS idx_citas_eventos_rescheduled
-    ON public.citas_eventos (creado_en DESC) WHERE tipo_evento = 'RESCHEDULED';
-CREATE INDEX IF NOT EXISTS idx_citas_eventos_cancelled
-    ON public.citas_eventos (creado_en DESC) WHERE tipo_evento = 'CANCELLED';
-CREATE INDEX IF NOT EXISTS idx_citas_eventos_cita
-    ON public.citas_eventos (cita_id);
-
--- 4. Trigger para registrar eventos
-CREATE OR REPLACE FUNCTION public.fn_log_cita_evento()
-RETURNS trigger AS $$
-DECLARE
-    v_resched BOOLEAN;
-BEGIN
-    IF TG_OP = 'INSERT' THEN
-        INSERT INTO public.citas_eventos(
-            cita_id, tipo_evento, old_fecha, new_fecha,
-            old_duracion, new_duracion, usuario_id
-        ) VALUES (
-            NEW.id, 'CREATED', NULL, NEW.fecha,
-            NULL, NEW.duracion, NEW.updated_by
-        );
-        RETURN NEW;
-    ELSIF TG_OP = 'UPDATE' THEN
-        IF NEW.estado = 'CANCELLED' AND OLD.estado <> 'CANCELLED' THEN
-            INSERT INTO public.citas_eventos(
-                cita_id, tipo_evento, old_fecha, new_fecha,
-                old_duracion, new_duracion, usuario_id
-            ) VALUES (
-                NEW.id, 'CANCELLED', OLD.fecha, NULL,
-                OLD.duracion, NULL, NEW.updated_by
-            );
-            RETURN NEW;
-        END IF;
-        v_resched := (NEW.fecha IS DISTINCT FROM OLD.fecha) OR (NEW.duracion IS DISTINCT FROM OLD.duracion);
-        IF v_resched AND NEW.estado <> 'CANCELLED' THEN
-            INSERT INTO public.citas_eventos(
-                cita_id, tipo_evento, old_fecha, new_fecha,
-                old_duracion, new_duracion, usuario_id
-            ) VALUES (
-                NEW.id, 'RESCHEDULED', OLD.fecha, NEW.fecha,
-                OLD.duracion, NEW.duracion, NEW.updated_by
-            );
-        END IF;
-        RETURN NEW;
-    END IF;
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-DROP TRIGGER IF EXISTS trg_log_cita_evento ON public.citas;
-CREATE TRIGGER trg_log_cita_evento
-AFTER INSERT OR UPDATE ON public.citas
-FOR EACH ROW
-EXECUTE FUNCTION public.fn_log_cita_evento();
-
--- 5. Backfill CREATED (si hubieran citas existentes con fecha y sin evento)
-INSERT INTO public.citas_eventos (cita_id, tipo_evento, new_fecha, new_duracion, usuario_id, creado_en)
-SELECT c.id, 'CREATED', c.fecha, c.duracion, c.updated_by, now()
-FROM public.citas c
-WHERE c.fecha IS NOT NULL
-    AND NOT EXISTS (
-        SELECT 1 FROM public.citas_eventos e
-        WHERE e.cita_id = c.id AND e.tipo_evento = 'CREATED'
-    );
