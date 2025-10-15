@@ -122,7 +122,8 @@ INSERT INTO diagnosticos (nombre, consulta_id, recomendacion) VALUES
 INSERT INTO usuarios (username, password_hash, correo) VALUES
 ('pcastejon', '1234', 'pcastejon@gmail.com'),
 ('jmerida', '1234', 'jmerida@gmail.com'),
-('jlopez', '1234', 'jlopez@gmail.com');
+('jlopez', '1234', 'jlopez@gmail.com'),
+('admin', '$2a$05$cAi/7N7qcV/O58.JPbOVzuPSAfBa0r0UJHSoMJud8Z.Hh0GM80Tri', 'admin@gmail.com');
 
 -- Roles
 INSERT INTO roles (nombre, descripcion) VALUES
