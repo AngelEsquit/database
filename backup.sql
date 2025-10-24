@@ -202,13 +202,13 @@ ALTER SEQUENCE public.consultas_preguntas_id_seq OWNED BY public.consultas_pregu
 -- Name: cuestionarios; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public.cuestionarios (
-    id integer NOT NULL,
-    nombre character varying NOT NULL,
-    version character varying NOT NULL,
-    activo boolean DEFAULT false NOT NULL
-);
 
+CREATE TABLE public.cuestionarios (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR NOT NULL,
+    version VARCHAR NOT NULL,
+    activo BOOLEAN NOT NULL DEFAULT false
+);
 
 ALTER TABLE public.cuestionarios OWNER TO postgres;
 
