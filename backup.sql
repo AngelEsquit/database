@@ -217,14 +217,6 @@ ALTER TABLE public.cuestionarios OWNER TO postgres;
 -- Name: cuestionarios_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE public.cuestionarios_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
 
 ALTER SEQUENCE public.cuestionarios_id_seq OWNER TO postgres;
 
@@ -1423,9 +1415,6 @@ ALTER TABLE ONLY public.consultas_preguntas
 -- TOC entry 4835 (class 2606 OID 90547)
 -- Name: cuestionarios cuestionarios_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
-
-ALTER TABLE ONLY public.cuestionarios
-    ADD CONSTRAINT cuestionarios_pkey PRIMARY KEY (id);
 
 
 --
